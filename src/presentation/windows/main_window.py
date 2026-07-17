@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
 )
 
 from src.core.store.store import game_store
+from src.presentation.widgets.score_controls import ScoreControls
 
 
 class MainWindow(QMainWindow):
@@ -34,10 +35,37 @@ class MainWindow(QMainWindow):
         """)
 
 
+        self.score_label = QLabel()
+
+        self.score_label.setStyleSheet("""
+            font-size:50px;
+            font-weight:bold;
+        """)
+
+
+        self.update_score()
+
+
+        controls = ScoreControls(
+            self.update_score
+        )
+
+
+        layout.addWidget(title)
+        layout.addWidget(self.score_label)
+        layout.addWidget(controls)
+
+
+        central.setLayout(layout)
+
+        self.setCentralWidget(central)
+
+
+    def update_score(self):
+
         state = game_store.state
 
-
-        marcador = QLabel(
+        self.score_label.setText(
             f"""
             {state.local_team}
 
@@ -50,18 +78,3 @@ class MainWindow(QMainWindow):
             {state.visitor_team}
             """
         )
-
-
-        marcador.setStyleSheet("""
-            font-size:50px;
-            font-weight:bold;
-        """)
-
-
-        layout.addWidget(title)
-        layout.addWidget(marcador)
-
-
-        central.setLayout(layout)
-
-        self.setCentralWidget(central)
