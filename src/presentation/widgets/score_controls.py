@@ -5,11 +5,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout
 )
 
-from src.core.events.event_bus import event_bus
-from src.core.events.score_events import (
-    LOCAL_SCORE_CHANGED,
-    VISITOR_SCORE_CHANGED
-)
+from src.services.game_controller import game_controller
 
 
 class ScoreControls(QWidget):
@@ -61,19 +57,17 @@ class ScoreControls(QWidget):
 
     def add_local(self, points):
 
-        print("CLICK LOCAL:", points)
+      print("CLICK LOCAL:", points)
 
-        event_bus.publish(
-            LOCAL_SCORE_CHANGED,
-            points
-        )
+      game_controller.add_local_score(points)
+
+      self.refresh_callback()
 
 
     def add_visitor(self, points):
 
-        print("CLICK VISITANTE:", points)
+      print("CLICK VISITANTE:", points)
 
-        event_bus.publish(
-            VISITOR_SCORE_CHANGED,
-            points
-        )
+      game_controller.add_visitor_score(points)
+
+      self.refresh_callback()
