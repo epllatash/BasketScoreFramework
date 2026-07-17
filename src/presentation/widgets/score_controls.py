@@ -5,16 +5,17 @@ from PyQt6.QtWidgets import (
     QVBoxLayout
 )
 
-from src.core.store.store import game_store
-from src.core.store.actions import (
-    ADD_LOCAL_SCORE,
-    ADD_VISITOR_SCORE
+from src.core.events.event_bus import event_bus
+from src.core.events.score_events import (
+    LOCAL_SCORE_CHANGED,
+    VISITOR_SCORE_CHANGED
 )
 
 
 class ScoreControls(QWidget):
 
-    def __init__(self, refresh_callback):
+    def __init__(self, refresh_callback=None):
+
         super().__init__()
 
         self.refresh_callback = refresh_callback
@@ -22,7 +23,7 @@ class ScoreControls(QWidget):
         layout = QVBoxLayout()
 
 
-        local = QHBoxLayout()
+        local_layout = QHBoxLayout()
 
         for points in [1, 2, 3]:
 
@@ -31,15 +32,13 @@ class ScoreControls(QWidget):
             )
 
             button.clicked.connect(
-                lambda checked,
-                p=points:
-                self.add_local(p)
+                lambda _, p=points: self.add_local(p)
             )
 
-            local.addWidget(button)
+            local_layout.addWidget(button)
 
 
-        visitor = QHBoxLayout()
+        visitor_layout = QHBoxLayout()
 
         for points in [1, 2, 3]:
 
@@ -48,35 +47,33 @@ class ScoreControls(QWidget):
             )
 
             button.clicked.connect(
-                lambda checked,
-                p=points:
-                self.add_visitor(p)
+                lambda _, p=points: self.add_visitor(p)
             )
 
-            visitor.addWidget(button)
+            visitor_layout.addWidget(button)
 
 
-        layout.addLayout(local)
-        layout.addLayout(visitor)
+        layout.addLayout(local_layout)
+        layout.addLayout(visitor_layout)
 
         self.setLayout(layout)
 
 
     def add_local(self, points):
 
-        game_store.dispatch(
-            ADD_LOCAL_SCORE,
+        print("CLICK LOCAL:", points)
+
+        event_bus.publish(
+            LOCAL_SCORE_CHANGED,
             points
         )
-
-        self.refresh_callback()
 
 
     def add_visitor(self, points):
 
-        game_store.dispatch(
-            ADD_VISITOR_SCORE,
+        print("CLICK VISITANTE:", points)
+
+        event_bus.publish(
+            VISITOR_SCORE_CHANGED,
             points
         )
-
-        self.refresh_callback()

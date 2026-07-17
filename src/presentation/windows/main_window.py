@@ -7,7 +7,12 @@ from PyQt6.QtWidgets import (
 
 from src.core.store.store import game_store
 from src.presentation.widgets.score_controls import ScoreControls
+from src.core.events.event_bus import event_bus
 
+from src.core.events.score_events import (
+    LOCAL_SCORE_CHANGED,
+    VISITOR_SCORE_CHANGED
+)
 
 class MainWindow(QMainWindow):
 
@@ -46,6 +51,15 @@ class MainWindow(QMainWindow):
         self.update_score()
 
 
+        event_bus.subscribe(
+        LOCAL_SCORE_CHANGED,
+        lambda event: self.update_score()
+        )
+
+        event_bus.subscribe(
+        VISITOR_SCORE_CHANGED,
+        lambda event: self.update_score()
+        )
         controls = ScoreControls(
             self.update_score
         )
