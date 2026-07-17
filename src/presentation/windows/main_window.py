@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (
 from src.core.store.store import game_store
 from src.presentation.widgets.score_controls import ScoreControls
 from src.core.events.event_bus import event_bus
+from src.presentation.widgets.score_display import ScoreDisplayWidget
 
 from src.core.events.score_events import (
     LOCAL_SCORE_CHANGED,
@@ -40,16 +41,12 @@ class MainWindow(QMainWindow):
         """)
 
 
-        self.score_label = QLabel()
+        self.score_display = ScoreDisplayWidget()
 
-        self.score_label.setStyleSheet("""
-            font-size:50px;
-            font-weight:bold;
-        """)
+        layout.addWidget(self.score_display)
 
 
-        self.update_score()
-
+        self.score_display.refresh()
 
         event_bus.subscribe(
         LOCAL_SCORE_CHANGED,
@@ -66,8 +63,8 @@ class MainWindow(QMainWindow):
 
 
         layout.addWidget(title)
-        layout.addWidget(self.score_label)
         layout.addWidget(controls)
+        layout.addWidget(self.score_display)
 
 
         central.setLayout(layout)
@@ -76,19 +73,4 @@ class MainWindow(QMainWindow):
 
 
     def update_score(self):
-
-        state = game_store.state
-
-        self.score_label.setText(
-            f"""
-            {state.local_team}
-
-            {state.local_score}
-
-            -
-
-            {state.visitor_score}
-
-            {state.visitor_team}
-            """
-        )
+         self.score_display.refresh()
